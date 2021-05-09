@@ -33,8 +33,10 @@ class Custom_Delivery_Date_Admin
     $this->version = $version;
     $this->loader = $loader;
 
+    $this->dd_weekdays_select_field();
     $this->dld_load_dependencies();
     $this->dld_define_admin_hooks();
+
   }
 
   /**
@@ -80,12 +82,14 @@ class Custom_Delivery_Date_Admin
       wp_enqueue_style('bootstrap-style-questionmark', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
       wp_enqueue_style('WOO-QB-font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
       wp_enqueue_style('WOO-QB-font-awesome1', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css');
-      wp_enqueue_style($this->plugin_name . '_for_admin', plugin_dir_url(__FILE__) . 'css/delivery-date-admin.css', array(), $this->version, 'all');
+      wp_enqueue_style($this->plugin_name . '_for_admin', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/css/delivery-date-admin.css', array(), $this->version, 'all');
+      wp_enqueue_style($this->plugin_name . '_for_custom_admin', plugin_dir_url(__FILE__) . '/custom-delivery-date-admin.css', array(), $this->version, 'all');
     }
     global $post, $wpdb;
     if ($hook == 'post-new.php' || $hook == 'post.php' || $_GET['page'] == 'woocommerce-delivery-schedular') {
       if ('product' === $post->post_type || $_GET['page'] == 'woocommerce-delivery-schedular') {
         wp_enqueue_style($this->plugin_name . '_for_admin', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/css/delivery-date-admin.css', array(), $this->version, 'all');
+        wp_enqueue_style($this->plugin_name . '_for_custom_admin', plugin_dir_url(__FILE__) . '/custom-delivery-date-admin.css', array(), $this->version, 'all');
       }
     }
 
@@ -100,7 +104,6 @@ class Custom_Delivery_Date_Admin
    */
   public function dld_enqueue_scripts($hook)
   {
-    print(plugin_dir_url(__FILE__));
     if ($_GET['page'] == 'woocommerce-delivery-schedular') {
       wp_enqueue_script('jquery-ui-datepicker');
       wp_enqueue_script('WOO-QB-bootstrap-javascript', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js');
@@ -109,12 +112,68 @@ class Custom_Delivery_Date_Admin
     if ($hook == 'post-new.php' || $hook == 'post.php' || $_GET['page'] == 'woocommerce-delivery-schedular') {
       if ('product' === $post->post_type || $_GET['page'] == 'woocommerce-delivery-schedular') {
         wp_enqueue_script($this->plugin_name . '-admin', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/js/delivery-date-admin.js', array('jquery'), $this->version, false);
+        wp_enqueue_script($this->plugin_name . '-custom-admin', plugin_dir_url(__FILE__) . '/custom-delivery-date-admin.js', array('jquery'), $this->version, false);
         wp_enqueue_script($this->plugin_name . '-multiDatepicker', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/js/jquery-ui.multidatespicker.js', array('jquery'), $this->version, false);
 
         wp_enqueue_script($this->plugin_name . '-moment', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/js/moment.min.js', array('jquery'), $this->version, false);
         wp_enqueue_script($this->plugin_name . '-daterangepicker', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/js/daterangepicker.min.js', array('jquery'), $this->version, false);
       }
     }
+  }
+
+  /**
+   * add Week days select to settings 
+   */
+  private function dd_weekdays_select_field()
+  {
+    $week_days_timeslots_fields = array( 
+      'sections'	=> array(
+          array(
+              'id'				=> 'dd_dash_current_dates_section', 
+              'title'			=> '', 
+              'desc'			=> '',
+          ),
+      ),
+      'fields'		=> array(
+              array(
+                'id'					=> 'dd_dash_monday_field', 
+                'title'				=> 'Monday', 
+                'section_id'	=> 'dd_dash_current_dates_section',
+              ),
+              array(
+                'id'					=> 'dd_dash_tuesday_field', 
+                'title'				=> 'Tuesday', 
+                'section_id'	=> 'dd_dash_current_dates_section',
+              ),
+              array(
+                'id'					=> 'dd_dash_wednesday_field', 
+                'title'				=> 'Wednesday', 
+                'section_id'	=> 'dd_dash_current_dates_section',
+              ),
+              array(
+                'id'					=> 'dd_dash_thursday_field', 
+                'title'				=> 'Thursday', 
+                'section_id'	=> 'dd_dash_current_dates_section',
+              ),
+              array(
+                'id'					=> 'dd_dash_friday_field', 
+                'title'				=> 'Friday', 
+                'section_id'	=> 'dd_dash_current_dates_section',
+              ),
+              array(
+                'id'					=> 'dd_dash_saturday_field', 
+                'title'				=> 'Saturday', 
+                'section_id'	=> 'dd_dash_current_dates_section',
+              ),
+              array(
+                'id'					=> 'dd_dash_sunday_field', 
+                'title'				=> 'Sunday', 
+                'section_id'	=> 'dd_dash_current_dates_section',
+              )
+        )
+    );
+  
+    $GLOBALS['dd_weekdays_timeslots'] = $week_days_timeslots_fields ;
   }
 
   /**
@@ -126,8 +185,8 @@ class Custom_Delivery_Date_Admin
    */
   protected function dld_admin_settings()
   {
-
-    $admin_settings = new Custom_Delivery_Date_Admin_Settings($GLOBALS['dd_settings'], $GLOBALS['dd_days'], $GLOBALS['dd_dates'], $GLOBALS['dd_dates_ranges'], $GLOBALS['dd_holidays_slot']);
+    
+    $admin_settings = new Custom_Delivery_Date_Admin_Settings($GLOBALS['dd_settings'], $GLOBALS['dd_days'], $GLOBALS['dd_dates'], $GLOBALS['dd_dates_ranges'], $GLOBALS['dd_holidays_slot'], $GLOBALS['dd_weekdays_timeslots'] );
     $this->loader->add_action('admin_menu', $admin_settings, 'dld_add_admin_menu');
     $this->loader->add_action('admin_init', $admin_settings, 'dld_settings_init');
     $this->loader->add_action('add_meta_boxes', $admin_settings, 'dld_add_meta_box');

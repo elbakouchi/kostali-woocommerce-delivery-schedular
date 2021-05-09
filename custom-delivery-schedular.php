@@ -113,6 +113,7 @@ if (!class_exists('Custom_Delivery_Date')) {
         print_r($_SESSION);
         die();
     }
+    
     function date_current_slot()
     {
         $id = $_POST['product_id'];
@@ -238,16 +239,15 @@ if (!class_exists('Custom_Delivery_Date')) {
 
     function dld_run_delivery_date()
     {
-
         $delivery_date = new Custom_Delivery_Date();
         $delivery_date->run();
     }
+
     function dld_apply_delivery_date_shortcode()
     {
-
-
         echo do_shortcode('[calender_p]');
     }
+    
     $options = get_option('dd_settings');
 
     function dld_apply_delivery_date_shortcode1()
@@ -489,39 +489,27 @@ if (!class_exists('Custom_Delivery_Date')) {
                     <td>
                         <label><?php echo esc_html__('Select Time Slot', 'Delivery-Date'); ?></label>
                     </td>
-                    <td><select name="time_slot" id="time_slot" class="select_time_slot"><?php
-                                                                                                    if ($Override_Delivery_dates == 'Override_Delivery_dates') {
-                                                                                                        if ($Delivery_dates_days_check == 'Delivery_Days') {
-                                                                                            ?><option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option><?php
+                    <td><select name="time_slot" id="time_slot" class="select_time_slot">
+                        <?php
+                                if ($Override_Delivery_dates == 'Override_Delivery_dates') {
+                                    if ($Delivery_dates_days_check == 'Delivery_Days') {
+                        ?>
+                        <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                        <?php } else if ($Delivery_dates_days_check == 'Delivery_dates') {
 
-                                                                                                                } else if ($Delivery_dates_days_check == 'Delivery_dates') {
-
-                                                                                                                    ?><option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option><?php
-
-                                                                                                                } else if ($Delivery_dates_days_check == 'Delivery_Deliveryday') {
-                                                                                                        ?><option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option><?php
-
-                                                                                                                }
-                                                                                                            } else {
-
-                                                                                                                if ($options['select_days_or_date'] == "override_days") {
-
-                                                                                                        ?><option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option><?php
-
-                                                                                                                } elseif ($options['select_days_or_date'] == "override_dates") {
-
-                                                                                                            ?><option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option><?php
-
-                                                                                                                } elseif ($options['select_days_or_date'] == "override_dates_range") {
-
-                                                                                                            ?><option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option><?php
-
-                                                                                                                } ?>
-                                ?>
-
-                            <?php
-                                                                                                            }
-                            ?></select></td>
+                                ?><option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                        <?php  } else if ($Delivery_dates_days_check == 'Delivery_Deliveryday') { ?>
+                        <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                        <?php }
+                        } else {
+                        if ($options['select_days_or_date'] == "override_days") {?>
+                        <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                            <?php } elseif ($options['select_days_or_date'] == "override_dates") { ?>
+                        <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                        <?php } elseif ($options['select_days_or_date'] == "override_dates_range") { ?>
+                        <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                        <?php  } ?>
+                        <?php } ?></select></td>
                 </tr>
             </tbody>
         </table>

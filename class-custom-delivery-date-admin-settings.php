@@ -3,7 +3,7 @@
 /**
  * The admin settings class of the plugin.
  *
- * @link       https://techspawn.com/
+ * @link       https://kostali.com/
  * @since      1.0.0
  *
  * @package    Delivery-Date
@@ -18,6 +18,7 @@ class Custom_Delivery_Date_Admin_Settings
     private $dd_dates;
     private $dd_dates_ranges;
     private $dd_holidays;
+    private $dd_weekdays_timeslots;
 
     /**
      * Initialize the class and set its properties.
@@ -26,7 +27,7 @@ class Custom_Delivery_Date_Admin_Settings
      * @param      string    $plugin_name   The name of this plugin.
      * @param      string    $version       The version of this plugin.
      */
-    public function __construct($dd_settings, $dd_days, $dd_dates, $dd_dates_ranges, $dd_holidays)
+    public function __construct($dd_settings, $dd_days, $dd_dates, $dd_dates_ranges, $dd_holidays, $dd_weekdays_timeslots=null)
     {
 
         $this->dd_settings = $dd_settings;
@@ -34,10 +35,14 @@ class Custom_Delivery_Date_Admin_Settings
         $this->dd_dates = $dd_dates;
         $this->dd_dates_ranges = $dd_dates_ranges;
         $this->dd_holidays = $dd_holidays;
+        $this->dd_weekdays_timeslots = $dd_weekdays_timeslots;
+
+
 
         add_action('wp_ajax_fun2', 'fun2');
 
         add_action('wp_ajax_nopriv_fun2', 'fun2');
+
         function fun2()
         {
 
@@ -58,8 +63,8 @@ class Custom_Delivery_Date_Admin_Settings
     {
 
         add_menu_page(
-            __('Custom Delivery Scheduler Dashboard Settings', 'dd-dash'),
-            __('Custom Delivery Scheduler Dashboard', 'dd-dash'),
+            __('Fine Delivery Scheduler Dashboard Settings', 'dd-dash'),
+            __('Fine Delivery Scheduler Dashboard', 'dd-dash'),
             'manage_options',
             'woocommerce-delivery-schedular',
             [$this, 'dld_settings_page_cb'],
@@ -74,12 +79,12 @@ class Custom_Delivery_Date_Admin_Settings
      */
     public function dld_settings_init()
     {
-
         register_setting('dd-dashboard', 'dd_settings');
         register_setting('dd-dashboard1', 'dd_days');
         register_setting('dd-dashboard2', 'dd_dates');
         register_setting('dd-dashboard3', 'dd_dates_ranges');
         register_setting('dd-dashboard4', 'dd_holidays');
+        register_setting('dd-dashboard5', 'dd_weekdays_timeslots');
 
         foreach ($this->dd_settings['sections'] as $section) {
 
@@ -181,6 +186,32 @@ class Custom_Delivery_Date_Admin_Settings
             );
         }
 
+
+        foreach ($this->dd_weekdays_timeslots['sections'] as $section) {
+
+            add_settings_section(
+                $section['id'],
+                __('<h5>' . $section['title'] . '</h5>', 'dd-dash'),
+                [$this, 'dld_settings_section_cb'],
+                'dd-dashboard5'
+            );
+        }
+
+        foreach ($this->dd_weekdays_timeslots['fields'] as $field) {
+
+            add_settings_field(
+                $field['id'],
+                __($field['title'], 'dd-dash'),
+                [$this, 'dld_settings_field_cb'],
+                'dd-dashboard5',
+                $field['section_id'],
+                [
+                    'label_for' => $field['id'],
+                    'class'     => 'dd_dash_row',
+                ]
+            );
+        }
+
         foreach ($this->dd_holidays['sections'] as $section) {
 
             add_settings_section(
@@ -206,6 +237,45 @@ class Custom_Delivery_Date_Admin_Settings
             );
         }
     }
+    private function echo_dd_weekday_timeslots($day, $daily_timeslots){
+        $daterange_results_day = 'daterange_results_' . $day;
+        echo '<div class="daterange_wrapper">';
+        echo '<div class="'.$daterange_results_day.'">';
+
+        $input_id    = 'dd_'.$day.'_timeslots';
+        $input_name    = 'dd_'.$day.'_timeslot[daterange_timeslots][]';
+        $add_button    = 'daterange_clone_' . $day;
+        $remove_button = 'daterange_remove_' . $day;
+
+        if ($daily_timeslots['daterange_timeslots'] == true) {
+            foreach ($daily_timeslots['daterange_timeslots'] as $index => $value) {
+                $id = $input_id . '_' . $index;
+                echo "<input type=\"text\" id=\"$id\" name=\"$input_name\" class=\"daterange_datetimes daterange_timeslots\" value=\"$value\" autocomplete=\"off\" />";
+            }
+        } else {
+            $id = $input_id . '_1';
+            echo "<input type=\"text\" id=\"$id\" name=\"$input_name\" class=\"daterange_datetimes daterange_timeslots\" value=\"\" autocomplete=\"off\" style=\"display: none;\" />";
+        }
+                                                                                                                                         
+        echo '</div>';
+        echo '<div class="daterange_buttons">';
+
+        echo   '<span class="_daterange_clone" id="'  . $add_button    . '">Add</span>';
+        echo   '<span class="_daterange_remove" id="' . $remove_button . '">Cancel</span>';
+
+
+        echo '</div>';
+        echo '</div>';
+        echo '<hr>';
+    }
+    /**
+     * @param string $day
+     */
+    private function echo_dd_weekday_timeslot_fields($day){
+        $Day = ucfirst($day);
+        echo "<p><span>$Day</span></p>";
+       // echo "<input type=\"hidden\" id=\"$day\" name=\"$day\"/>";
+    }
 
     /**
      * Callback to render section fields called upon add settings field.
@@ -221,11 +291,43 @@ class Custom_Delivery_Date_Admin_Settings
         $dates_options = get_option('dd_dates');
         $dates_range_options = get_option('dd_dates_ranges');
         $holidays_options = get_option('dd_holidays');
+        $daily_timeslots  = get_option('dd_daily_timeslots');
 
         $label_for = $args['label_for'];
 
         switch ($label_for) {
 
+            case 'dd_dash_week_days_field':
+                $week_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                echo '<select id="weekDay" class="">';
+                echo '<option id="nothing"   value="" selected>--</option>';
+                foreach ($week_days as $index => $week_day) {
+                    echo "<option id=\"day-$index\"  value=\"$index\">$week_day</option>";
+                }
+                echo '</select>';
+                break;
+            case 'dd_dash_sunday_field':
+               // $this->echo_dd_weekday_timeslot_fields('sunday');
+                $this->echo_dd_weekday_timeslots('sunday', $daily_timeslots);
+                break;
+            case 'dd_dash_monday_field':
+                $this->echo_dd_weekday_timeslots('monday', $daily_timeslots);
+                break;
+            case 'dd_dash_tuesday_field':
+                $this->echo_dd_weekday_timeslots('tuesday', $daily_timeslots);
+                break; 
+            case 'dd_dash_wednesday_field':
+                $this->echo_dd_weekday_timeslots('wednesday', $daily_timeslots);
+                break;                           
+            case 'dd_dash_thursday_field':
+                $this->echo_dd_weekday_timeslots('thursday', $daily_timeslots);
+                break;
+            case 'dd_dash_friday_field':
+                $this->echo_dd_weekday_timeslots('friday', $daily_timeslots);
+                break; 
+            case 'dd_dash_saturday_field':
+                $this->echo_dd_weekday_timeslots('saturday', $daily_timeslots);
+                break;    
             case 'dd_dash_delivery_days_field':
                 $week_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                 $avail_days = '';
@@ -400,14 +502,13 @@ class Custom_Delivery_Date_Admin_Settings
                         <?php
                         if ($dates_options['dates_datetimes'] == true) {
                             foreach ($dates_options['dates_datetimes'] as $value) {
-                        ?><input type="text" name="dd_dates[dates_datetimes][]" class="dates_datetimes" value="<?php echo $value; ?>" autocomplete="off" /><?php
-                                                                                                                                                }
-                                                                                                                                            } else {
-                                                                                                                                                    ?><input type="text" name="dd_dates[dates_datetimes][]" class="dates_datetimes" value="<?php echo $value; ?>" autocomplete="off" /><?php
-                                                                                                                                                }
-
-
-                                                                                                                                                    ?>
+                        ?><input type="text" name="dd_dates[dates_datetimes][]" class="dates_datetimes" value="<?php echo $value; ?>" autocomplete="off" />
+                        <?php
+                            }
+                        } else {
+                                ?><input type="text" name="dd_dates[dates_datetimes][]" class="dates_datetimes" value="<?php echo $value; ?>" autocomplete="off" /><?php
+                            }
+                        ?>
                     </div>
                     <div class="dates_buttons">
 
@@ -439,15 +540,18 @@ class Custom_Delivery_Date_Admin_Settings
                     </div>
                     <div class="daterange_buttons">
 
-                        <span class="daterange_clone">Add</span>
-                        <span class="daterange_remove">Cancel</span>
+                        <span class="_">Add</span>
+                        <span class="_daterange_remove">Cancel</span>
 
 
                     </div>
                 </div>
             <?php
                 break;
+            case 'dd_weekday_daterange_multi_time_slot':
 
+                   
+                        break;    
 
             case 'dd_holiday_slot':
             ?>
@@ -551,11 +655,11 @@ class Custom_Delivery_Date_Admin_Settings
             <div class="row" style="width: 100%;">
                 <div class="col-md-8 ">
                     <div class=" wqc_main_header col-md-2 ">
-                        <img class="QB_icon" src="<?php echo plugin_dir_url(__FILE__) . "images/delivery_icon.jpg"; ?>">
+                        <img class="QB_icon" src="<?php echo plugin_dir_url(__FILE__) . "../woocommerce-delivery-schedular/admin/images/delivery_icon.jpg"; ?>">
                         <!-- <i class="fa fa-sitemap QB_icon"></i> -->
                     </div>
                     <div class="col-md-10">
-                        <div class="delivery_header"> Woocommerce Delivery Schedular </div>
+                        <div class="delivery_header"> Fine Woocommerce Delivery Schedular </div>
                         <p>
                             As an administrator, you can provide delivery days or dates or date range and time slot to the customer and then customer can select any delivery day or date or date range and time slot that you provide. Administrator has a rights to enable or disable delivery days or dates or date range for all products or particular product.
                         </p>
@@ -573,10 +677,10 @@ class Custom_Delivery_Date_Admin_Settings
                         <!-- Connection Status End -->
                         <!-- User Guide and Support Start -->
                         <div class="col-md-6">
-                            <div class="delivery_info" onclick="window.open('https://techspawn.com/docs/woocommerce-delivery-schedular/');"> <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+                            <div class="delivery_info" onclick="window.open('https://kostali.com/docs/woocommerce-delivery-schedular/');"> <i class="fa fa-file-pdf-o" aria-hidden="true"></i>
                                 <div>User Guide</div>
                             </div>
-                            <div class="delivery_info" onclick="window.open('https://techspawn.com/connect-with-techspawn/');"> <i class="fa fa-question-circle" aria-hidden="true"></i>
+                            <div class="delivery_info" onclick="window.open('https://kostali.com/connect-with-kostali/');"> <i class="fa fa-question-circle" aria-hidden="true"></i>
                                 <div>Support</div>
                             </div>
                         </div>
@@ -598,6 +702,9 @@ class Custom_Delivery_Date_Admin_Settings
                 <li><a href="#Delivery_Dates_Range" class="link_class"><i class="delivery_fa_icon fas fa-calendar-week"></i>
                         <div>Delivery Dates Range</div>
                     </a></li>
+                <li><a href="#Week_Days_Timeslots" class="link_class"><i class="delivery_fa_icon fas fa-calendar-week"></i>
+                        <div>Week Days Timeslots</div>
+                    </a></li>    
                 <li><a href="#Holidays" class="link_class"><i class="delivery_fa_icon far fa-calendar-times"></i>
                         <div>Holidays Dates</div>
                     </a></li>
@@ -657,6 +764,23 @@ class Custom_Delivery_Date_Admin_Settings
 
             </div>
 
+            <div id="Week_Days_Timeslots" class="tab">
+                <h3><i class="delivery_fa_icon fas fa-calendar-week"></i><span></span>
+                    Week Days Timeslots</h3>
+                <div class='wrap'>
+                    <form action='options.php' method='post'>
+                        <?php esc_html(get_admin_page_title()); ?>
+
+                        <?php 
+                             settings_fields('dd-dashboard5');
+                             do_settings_sections('dd-dashboard5');
+                        ?>
+                       <?php submit_button(); ?>
+                    </form>
+                </div>
+
+            </div>
+
             <div id="Holidays" class="tab">
                 <h3>
                     <i class="delivery_fa_icon far fa-calendar-times"></i><span></span>
@@ -701,9 +825,9 @@ class Custom_Delivery_Date_Admin_Settings
                     <iframe width="100%" height="350" src="https://www.youtube.com/embed/2rKZbWf557s">
                     </iframe></div>
                 <div class="col-md-4">
-                    <div class="support_btn" onclick="window.open('https://techspawn.com/connect-with-techspawn/');">Contact Us</div>
-                    <div class="support_btn" onclick="window.open('https://techspawn.com/docs/woocommerce-delivery-schedular/');">User Guide</div>
-                    <div class="support_btn" onclick="window.open('https://techspawn.com/');">About Us</div>
+                    <div class="support_btn" onclick="window.open('https://kostali.com/connect-with-kostali/');">Contact Us</div>
+                    <div class="support_btn" onclick="window.open('https://kostali.com/docs/woocommerce-delivery-schedular/');">User Guide</div>
+                    <div class="support_btn" onclick="window.open('https://kostali.com/');">About Us</div>
                 </div>
                 <div class="col-md-12">
                     <div class=tab-heading>
@@ -796,7 +920,7 @@ class Custom_Delivery_Date_Admin_Settings
 
         add_meta_box(
             'del_date_meta_box',
-            __('Delivery Date', 'del_date'),
+            __('Delivery Date & Timeslots', 'del_date'),
             [$this, 'dld_add_custom_content_meta_box'],
             'product',
             'normal',
@@ -827,6 +951,7 @@ class Custom_Delivery_Date_Admin_Settings
         $datetimes_days_slot = get_post_meta($post->ID, $prefix . 'datetimes_days', true);
 
         $datetimes_dates_slot = get_post_meta($post->ID, $prefix . 'datetimes_dates', true);
+        $weekdays_timeslots = get_post_meta($post->ID, $prefix, 'weekdays_timeslots', true);
         $datetimes_daterange = get_post_meta($post->ID, $prefix . 'datetimes_daterange', true);
 
         // get time slot value end
@@ -859,6 +984,7 @@ class Custom_Delivery_Date_Admin_Settings
                     <a class="pro_link_class">Override Global Settings</a>
                     <a class="pro_link_class">Delivery Days</a>
                     <a class="pro_link_class">Delivery Dates</a>
+                    <a class="pro_link_class">Daily Delivery Timeslots</a>
                     <a class="pro_link_class">Delivery Dates Range</a>
                     <a class="pro_link_class">Holidays Dates</a>
                     <a class="pro_link_class">Settings tab</a>
@@ -937,14 +1063,10 @@ class Custom_Delivery_Date_Admin_Settings
                             <?php
                             if ($datetimes_dates_slot == true) {
                                 foreach ($datetimes_dates_slot as $value) {
-                            ?><input type="text" name="mul_datetimes_dates[]" class="mul_dates_datetimes" value="<?php echo $value; ?>" autocomplete="off" /><?php
-                                                                                                                                                }
-                                                                                                                                            } else {
-
-                                                                                                                                                    ?><input type="text" name="mul_datetimes_dates[]" class="mul_dates_datetimes" value="" autocomplete="off" /><?php
-
-                                                                                                                                            }
-                                                                                                                            ?>
+                            ?><input type="text" name="mul_datetimes_dates[]" class="mul_dates_datetimes" value="<?php echo $value; ?>" autocomplete="off" />
+                            <?php } } else {?>
+                        <input type="text" name="mul_datetimes_dates[]" class="mul_dates_datetimes" value="" autocomplete="off" />
+                        <?php } ?>
                         </div>
                         <div class="mul_dates_buttons">
                             <span class="mul_dates_clone">Add</span>
@@ -952,6 +1074,18 @@ class Custom_Delivery_Date_Admin_Settings
 
                         </div>
                     </div>
+                </div>
+                <div class="content">
+                <h4>Daily Delivery Timeslots</h4>
+                    <br>
+                    <?php $this->echo_dd_weekday_timeslot_fields('monday'); $this->echo_dd_weekday_timeslots('monday', $this->daily_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('tuesday'); $this->echo_dd_weekday_timeslots('tuesday', $this->daily_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('wednesday'); $this->echo_dd_weekday_timeslots('wednesday', $this->daily_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('thursday'); $this->echo_dd_weekday_timeslots('thursday', $this->daily_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('friday'); $this->echo_dd_weekday_timeslots('friday', $this->daily_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('saturday'); $this->echo_dd_weekday_timeslots('saturday', $this->daily_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('sunday'); $this->echo_dd_weekday_timeslots('sunday', $this->daily_timeslots); ?>
+
                 </div>
                 <div class="content">
                     <h4>Delivery Dates Range</h4>
@@ -1087,6 +1221,7 @@ class Custom_Delivery_Date_Admin_Settings
 
         update_post_meta($post->ID, $prefix . 'datetimes_days', $_POST['mul_datetimes_days']);
         update_post_meta($post->ID, $prefix . 'datetimes_dates', $_POST['mul_datetimes_dates']);
+        update_post_meta($post->ID, $prefix . 'datetimes_daterange', $_POST['mul_datetimes_daterange']);
         update_post_meta($post->ID, $prefix . 'datetimes_daterange', $_POST['mul_datetimes_daterange']);
 
         $save =  get_post_meta($post->ID, $prefix . 'datetimes', true);

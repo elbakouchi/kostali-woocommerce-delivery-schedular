@@ -1,0 +1,17 @@
+#daterange_clone_monday, #daterange_clone_saturday, #daterange_clone_sunday, #daterange_clone_friday,
+#daterange_clone_wednesday, #daterange_clone_thursday, #daterange_clone_tuesday {
+    padding: 2px 30px;
+    border: 1px solid;
+    margin-right: 15px;
+    background-color: #cfefbf;
+    cursor: pointer;
+}
+
+#daterange_remove_monday, #daterange_remove_saturday, #daterange_remove_sunday, #daterange_remove_friday,
+#daterange_remove_wednesday, #daterange_remove_thursday, #daterange_remove_tuesday{
+    padding: 2px 30px;
+    border: 1px solid;
+    margin-right: 15px;
+    background-color: #e39d9d;
+    cursor: pointer;
+}   
