@@ -77,7 +77,7 @@ class Custom_Delivery_Date_Admin
   public function dld_enqueue_styles($hook)
   {
 
-    if ($_GET['page'] == 'woocommerce-delivery-schedular') {
+    if (array_key_exists('page', $_GET) &&  $_GET['page'] == 'woocommerce-delivery-schedular') {
       wp_enqueue_style('jquery-ui-style', plugins_url() . '/woocommerce/assets/css/jquery-ui/jquery-ui.min.css', array(), $this->version, 'all');
       wp_enqueue_style('bootstrap-style-questionmark', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
       wp_enqueue_style('WOO-QB-font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
@@ -87,7 +87,7 @@ class Custom_Delivery_Date_Admin
     }
     global $post, $wpdb;
     if ($hook == 'post-new.php' || $hook == 'post.php' || $_GET['page'] == 'woocommerce-delivery-schedular') {
-      if ('product' === $post->post_type || $_GET['page'] == 'woocommerce-delivery-schedular') {
+      if ($post && 'product' === $post->post_type || $_GET['page'] == 'woocommerce-delivery-schedular') {
         wp_enqueue_style($this->plugin_name . '_for_admin', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/css/delivery-date-admin.css', array(), $this->version, 'all');
         wp_enqueue_style($this->plugin_name . '_for_custom_admin', plugin_dir_url(__FILE__) . '/custom-delivery-date-admin.css', array(), $this->version, 'all');
       }
@@ -104,13 +104,13 @@ class Custom_Delivery_Date_Admin
    */
   public function dld_enqueue_scripts($hook)
   {
-    if ($_GET['page'] == 'woocommerce-delivery-schedular') {
+    if (array_key_exists('page', $_GET) && $_GET['page'] == 'woocommerce-delivery-schedular') {
       wp_enqueue_script('jquery-ui-datepicker');
       wp_enqueue_script('WOO-QB-bootstrap-javascript', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js');
     }
     global $post;
     if ($hook == 'post-new.php' || $hook == 'post.php' || $_GET['page'] == 'woocommerce-delivery-schedular') {
-      if ('product' === $post->post_type || $_GET['page'] == 'woocommerce-delivery-schedular') {
+      if ($post && 'product' === $post->post_type || $_GET['page'] == 'woocommerce-delivery-schedular') {
         wp_enqueue_script($this->plugin_name . '-admin', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/js/delivery-date-admin.js', array('jquery'), $this->version, false);
         wp_enqueue_script($this->plugin_name . '-custom-admin', plugin_dir_url(__FILE__) . '/custom-delivery-date-admin.js', array('jquery'), $this->version, false);
         wp_enqueue_script($this->plugin_name . '-multiDatepicker', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/js/jquery-ui.multidatespicker.js', array('jquery'), $this->version, false);
@@ -191,5 +191,13 @@ class Custom_Delivery_Date_Admin
     $this->loader->add_action('admin_init', $admin_settings, 'dld_settings_init');
     $this->loader->add_action('add_meta_boxes', $admin_settings, 'dld_add_meta_box');
     $this->loader->add_action('save_post', $admin_settings, 'dld_save_meta_box_fields');
+    $this->loader->add_action('added_option_dd_monday_timeslots', $admin_settings, 'dld_save_dashboard_timeslots_options');
+    $this->loader->add_action('added_option_dd_tuesday_timeslots', $admin_settings, 'dld_save_dashboard_timeslots_options');
+    $this->loader->add_action('added_option_dd_wednesday_timeslots', $admin_settings, 'dld_save_dashboard_timeslots_options');
+    $this->loader->add_action('added_option_dd_thursday_timeslots', $admin_settings, 'dld_save_dashboard_timeslots_options');
+    $this->loader->add_action('added_option_dd_friday_timeslots', $admin_settings, 'dld_save_dashboard_timeslots_options');
+    $this->loader->add_action('added_option_dd_saturday_timeslots', $admin_settings, 'dld_save_dashboard_timeslots_options');
+    $this->loader->add_action('added_option_dd_sunday_timeslots', $admin_settings, 'dld_save_dashboard_timeslots_options');
+    
   }
 }

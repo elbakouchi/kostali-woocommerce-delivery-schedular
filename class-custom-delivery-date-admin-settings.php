@@ -84,7 +84,13 @@ class Custom_Delivery_Date_Admin_Settings
         register_setting('dd-dashboard2', 'dd_dates');
         register_setting('dd-dashboard3', 'dd_dates_ranges');
         register_setting('dd-dashboard4', 'dd_holidays');
-        register_setting('dd-dashboard5', 'dd_weekdays_timeslots');
+        register_setting('dd-dashboard5', 'dd_monday_timeslots');
+        register_setting('dd-dashboard5', 'dd_tuesday_timeslots');
+        register_setting('dd-dashboard5', 'dd_wednesday_timeslots');
+        register_setting('dd-dashboard5', 'dd_thursday_timeslots');
+        register_setting('dd-dashboard5', 'dd_friday_timeslots');
+        register_setting('dd-dashboard5', 'dd_sunday_timeslots');
+        register_setting('dd-dashboard5', 'dd_saturday_timeslots');
 
         foreach ($this->dd_settings['sections'] as $section) {
 
@@ -237,24 +243,37 @@ class Custom_Delivery_Date_Admin_Settings
             );
         }
     }
+
     private function echo_dd_weekday_timeslots($day, $daily_timeslots){
         $daterange_results_day = 'daterange_results_' . $day;
         echo '<div class="daterange_wrapper">';
         echo '<div class="'.$daterange_results_day.'">';
 
-        $input_id    = 'dd_'.$day.'_timeslots';
-        $input_name    = 'dd_'.$day.'_timeslot[daterange_timeslots][]';
+        $input_id      = 'dd_'.$day.'_timeslots';
+        $input_name    = 'dd_'.$day.'_timeslots[]';
         $add_button    = 'daterange_clone_' . $day;
         $remove_button = 'daterange_remove_' . $day;
-
-        if ($daily_timeslots['daterange_timeslots'] == true) {
-            foreach ($daily_timeslots['daterange_timeslots'] as $index => $value) {
-                $id = $input_id . '_' . $index;
-                echo "<input type=\"text\" id=\"$id\" name=\"$input_name\" class=\"daterange_datetimes daterange_timeslots\" value=\"$value\" autocomplete=\"off\" />";
-            }
-        } else {
-            $id = $input_id . '_1';
-            echo "<input type=\"text\" id=\"$id\" name=\"$input_name\" class=\"daterange_datetimes daterange_timeslots\" value=\"\" autocomplete=\"off\" style=\"display: none;\" />";
+        
+        $id = $input_id . '_0';
+        echo "<input type=\"text\" id=\"$id\" class=\"daterange_datetimes daterange_timeslots\" value=\"\" autocomplete=\"off\" style=\"display: none;\" />";
+        
+        if (is_array($daily_timeslots) ){
+           if( array_key_exists($input_name,  $daily_timeslots)){
+                foreach ($daily_timeslots[$input_name] as $index => $value) {
+                    $id = $input_id . '_' . $index;
+                    echo "<input type=\"text\" id=\"$id\" name=\"$input_name\" class=\"daterange_datetimes daterange_timeslots\" value=\"$value\" autocomplete=\"off\" />";
+                }
+            } elseif( array_key_exists($input_id,  $daily_timeslots)){
+                foreach ($daily_timeslots[$input_id] as $index => $value) {
+                    $id = $input_id . '_' . $index;
+                    echo "<input type=\"text\" id=\"$id\" name=\"$input_name\" class=\"daterange_datetimes daterange_timeslots\" value=\"$value\" autocomplete=\"off\" />";
+                }
+            } elseif (count($daily_timeslots)){
+                foreach ($daily_timeslots as $index => $value){
+                    $id = $input_id . '_' . $index;
+                    echo "<input type=\"text\" id=\"$id\" name=\"$input_name\" class=\"daterange_datetimes daterange_timeslots\" value=\"$value\" autocomplete=\"off\" />";
+                }
+            } 
         }
                                                                                                                                          
         echo '</div>';
@@ -284,15 +303,19 @@ class Custom_Delivery_Date_Admin_Settings
      */
     public function dld_settings_field_cb($args)
     {
-
-
         $options = get_option('dd_settings');
         $days_options = get_option('dd_days');
         $dates_options = get_option('dd_dates');
         $dates_range_options = get_option('dd_dates_ranges');
         $holidays_options = get_option('dd_holidays');
-        $daily_timeslots  = get_option('dd_daily_timeslots');
-
+        $monday_timeslots  = get_option('dd_monday_timeslots');
+        $tuesday_timeslots = get_option('dd_tuesday_timeslots');
+        $wednesday_timeslots  = get_option('dd_wednesday_timeslots');
+        $thursday_timeslots  = get_option('dd_thursday_timeslots');
+        $friday_timeslots  = get_option('dd_friday_timeslots');
+        $saturday_timeslots  = get_option('dd_saturday_timeslots');
+        $sunday_timeslots  = get_option('dd_sunday_timeslots');
+        
         $label_for = $args['label_for'];
 
         switch ($label_for) {
@@ -308,25 +331,25 @@ class Custom_Delivery_Date_Admin_Settings
                 break;
             case 'dd_dash_sunday_field':
                // $this->echo_dd_weekday_timeslot_fields('sunday');
-                $this->echo_dd_weekday_timeslots('sunday', $daily_timeslots);
+                $this->echo_dd_weekday_timeslots('sunday', $sunday_timeslots);
                 break;
             case 'dd_dash_monday_field':
-                $this->echo_dd_weekday_timeslots('monday', $daily_timeslots);
+                $this->echo_dd_weekday_timeslots('monday', $monday_timeslots);
                 break;
             case 'dd_dash_tuesday_field':
-                $this->echo_dd_weekday_timeslots('tuesday', $daily_timeslots);
+                $this->echo_dd_weekday_timeslots('tuesday', $tuesday_timeslots);
                 break; 
             case 'dd_dash_wednesday_field':
-                $this->echo_dd_weekday_timeslots('wednesday', $daily_timeslots);
+                $this->echo_dd_weekday_timeslots('wednesday', $wednesday_timeslots);
                 break;                           
             case 'dd_dash_thursday_field':
-                $this->echo_dd_weekday_timeslots('thursday', $daily_timeslots);
+                $this->echo_dd_weekday_timeslots('thursday', $thursday_timeslots);
                 break;
             case 'dd_dash_friday_field':
-                $this->echo_dd_weekday_timeslots('friday', $daily_timeslots);
+                $this->echo_dd_weekday_timeslots('friday', $friday_timeslots);
                 break; 
             case 'dd_dash_saturday_field':
-                $this->echo_dd_weekday_timeslots('saturday', $daily_timeslots);
+                $this->echo_dd_weekday_timeslots('saturday', $saturday_timeslots);
                 break;    
             case 'dd_dash_delivery_days_field':
                 $week_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -951,8 +974,16 @@ class Custom_Delivery_Date_Admin_Settings
         $datetimes_days_slot = get_post_meta($post->ID, $prefix . 'datetimes_days', true);
 
         $datetimes_dates_slot = get_post_meta($post->ID, $prefix . 'datetimes_dates', true);
-        $weekdays_timeslots = get_post_meta($post->ID, $prefix, 'weekdays_timeslots', true);
         $datetimes_daterange = get_post_meta($post->ID, $prefix . 'datetimes_daterange', true);
+       
+
+        $product_monday_timeslots = get_post_meta($post->ID, $prefix . 'dd_monday_timeslots', true    );
+        $product_tuesday_timeslots = get_post_meta($post->ID, $prefix . 'dd_tuesday_timeslots', true   );
+        $product_wednesday_timeslots = get_post_meta($post->ID, $prefix . 'dd_wednesday_timeslots', true );
+        $product_thursday_timeslots = get_post_meta($post->ID, $prefix . 'dd_thursday_timeslots', true  );
+        $product_friday_timeslots = get_post_meta($post->ID, $prefix . 'dd_friday_timeslots', true    );
+        $product_saturday_timeslots = get_post_meta($post->ID, $prefix . 'dd_saturday_timeslots', true  );
+        $product_sunday_timeslots = get_post_meta($post->ID, $prefix . 'dd_sunday_timeslots', true    );
 
         // get time slot value end
 
@@ -1078,13 +1109,13 @@ class Custom_Delivery_Date_Admin_Settings
                 <div class="content">
                 <h4>Daily Delivery Timeslots</h4>
                     <br>
-                    <?php $this->echo_dd_weekday_timeslot_fields('monday'); $this->echo_dd_weekday_timeslots('monday', $this->daily_timeslots); ?>
-                    <?php $this->echo_dd_weekday_timeslot_fields('tuesday'); $this->echo_dd_weekday_timeslots('tuesday', $this->daily_timeslots); ?>
-                    <?php $this->echo_dd_weekday_timeslot_fields('wednesday'); $this->echo_dd_weekday_timeslots('wednesday', $this->daily_timeslots); ?>
-                    <?php $this->echo_dd_weekday_timeslot_fields('thursday'); $this->echo_dd_weekday_timeslots('thursday', $this->daily_timeslots); ?>
-                    <?php $this->echo_dd_weekday_timeslot_fields('friday'); $this->echo_dd_weekday_timeslots('friday', $this->daily_timeslots); ?>
-                    <?php $this->echo_dd_weekday_timeslot_fields('saturday'); $this->echo_dd_weekday_timeslots('saturday', $this->daily_timeslots); ?>
-                    <?php $this->echo_dd_weekday_timeslot_fields('sunday'); $this->echo_dd_weekday_timeslots('sunday', $this->daily_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('monday'); $this->echo_dd_weekday_timeslots('monday', $product_monday_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('tuesday'); $this->echo_dd_weekday_timeslots('tuesday',$product_tuesday_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('wednesday'); $this->echo_dd_weekday_timeslots('wednesday', $product_wednesday_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('thursday'); $this->echo_dd_weekday_timeslots('thursday', $product_thursday_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('friday'); $this->echo_dd_weekday_timeslots('friday', $product_friday_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('saturday'); $this->echo_dd_weekday_timeslots('saturday', $product_saturday_timeslots); ?>
+                    <?php $this->echo_dd_weekday_timeslot_fields('sunday'); $this->echo_dd_weekday_timeslots('sunday', $product_sunday_timeslots); ?>
 
                 </div>
                 <div class="content">
@@ -1219,10 +1250,18 @@ class Custom_Delivery_Date_Admin_Settings
 
         update_post_meta($post->ID, $prefix . 'custom_date', wp_kses_post(sanitize_text_field($_POST['custom_date'])));
 
+    
         update_post_meta($post->ID, $prefix . 'datetimes_days', $_POST['mul_datetimes_days']);
         update_post_meta($post->ID, $prefix . 'datetimes_dates', $_POST['mul_datetimes_dates']);
         update_post_meta($post->ID, $prefix . 'datetimes_daterange', $_POST['mul_datetimes_daterange']);
-        update_post_meta($post->ID, $prefix . 'datetimes_daterange', $_POST['mul_datetimes_daterange']);
+        update_post_meta($post->ID, $prefix . 'dd_monday_timeslots', $_POST['dd_monday_timeslots']       );
+        update_post_meta($post->ID, $prefix . 'dd_tuesday_timeslots', $_POST['dd_tuesday_timeslots']     );
+        update_post_meta($post->ID, $prefix . 'dd_wednesday_timeslots', $_POST['dd_wednesday_timeslots'] );
+        update_post_meta($post->ID, $prefix . 'dd_thursday_timeslots', $_POST['dd_thursday_timeslots']   );
+        update_post_meta($post->ID, $prefix . 'dd_friday_timeslots', $_POST['dd_friday_timeslots']       );
+        update_post_meta($post->ID, $prefix . 'dd_saturday_timeslots', $_POST['dd_saturday_timeslots']   );
+        update_post_meta($post->ID, $prefix . 'dd_sunday_timeslots', $_POST['dd_sunday_timeslots']       );
+        
 
         $save =  get_post_meta($post->ID, $prefix . 'datetimes', true);
 
@@ -1255,6 +1294,18 @@ class Custom_Delivery_Date_Admin_Settings
 
 
         $new_meta_value = (isset($_POST['Delivery_dates_days']) ? sanitize_html_class($_POST['Delivery_dates_days']) : '');
+    }
+
+    public function dld_save_dashboard_timeslots_options(){
+        error_reporting('save option:');
+        $weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        foreach ($weekdays as $day){
+            $field = 'dd_' . $day . '_timeslots[]';
+            if(array_key_exists($field, $_POST)){
+                error_log('option: '. $field);
+                update_option($field, $_POST[$field], true);
+            }
+        }
     }
 }
 ?>

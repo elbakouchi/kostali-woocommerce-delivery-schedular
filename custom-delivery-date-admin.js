@@ -6,7 +6,7 @@ jQuery(document).ready(function() {
           .find(".daterange_timeslots")
           .first()
           .clone()
-          .prop('id',id)
+          .prop('id',id).prop('name','dd_monday_timeslots[]')
           .show()
           .appendTo(".daterange_results_monday");
         jQuery('#'+id)
@@ -19,10 +19,9 @@ jQuery(document).ready(function() {
           })
           .on("show.daterangepicker", function(ev, picker) {
             picker.container.find(".calendar-table").hide();
-          });
-       // jQuery("#dd_monday_timeslots_1").hide()   
+          });   
+       jQuery("#dd_monday_timeslots_0").hide()  
       });
-    jQuery("#dd_monday_timeslots_1").hide()  
     jQuery(".daterange_wrapper").on("click", "#daterange_clone_tuesday", function() {
       let id = Math.random().toString(36).substring(7);
         jQuery("#daterange_clone_tuesday")
@@ -30,7 +29,7 @@ jQuery(document).ready(function() {
           .find(".daterange_timeslots")
           .first()
           .clone()
-          .prop('id',id)
+          .prop('id',id).prop('name','dd_tuesday_timeslots[]')
           .show()
           .appendTo(".daterange_results_tuesday");
         jQuery('#'+id)
@@ -44,7 +43,7 @@ jQuery(document).ready(function() {
           .on("show.daterangepicker", function(ev, picker) {
             picker.container.find(".calendar-table").hide();
           });
-        jQuery("#dd_tuesday_timeslots_1").hide()           
+        jQuery("#dd_tuesday_timeslots_0").hide()           
     });
     jQuery(".daterange_wrapper").on("click", "#daterange_clone_wednesday", function() {
       let id = Math.random().toString(36).substring(7);
@@ -53,7 +52,7 @@ jQuery(document).ready(function() {
           .find(".daterange_timeslots")
           .first()
           .clone()
-          .prop('id',id)
+          .prop('id',id).prop('name','dd_wednesday_timeslots[]')
           .show()
           .appendTo(".daterange_results_wednesday");
         jQuery('#'+id)
@@ -67,7 +66,7 @@ jQuery(document).ready(function() {
           .on("show.daterangepicker", function(ev, picker) {
             picker.container.find(".calendar-table").hide();
           });
-        jQuery("#dd_wednesday_timeslots_1").hide()   
+        jQuery("#dd_wednesday_timeslots_0").hide()   
       });
       jQuery(".daterange_wrapper").on("click", "#daterange_clone_thursday", function() {
         let id = Math.random().toString(36).substring(7);
@@ -76,7 +75,7 @@ jQuery(document).ready(function() {
           .find(".daterange_timeslots")
           .first()
           .clone()
-          .prop('id',id)
+          .prop('id',id).prop('name','dd_thursday_timeslots[]')
           .show()
           .appendTo(".daterange_results_thursday");
         jQuery('#'+id)
@@ -90,7 +89,7 @@ jQuery(document).ready(function() {
           .on("show.daterangepicker", function(ev, picker) {
             picker.container.find(".calendar-table").hide();
           });
-        jQuery("#dd_thursday_timeslots_1").hide()   
+        jQuery("#dd_thursday_timeslots_0").hide()   
       });
       jQuery(".daterange_wrapper").on("click", "#daterange_clone_friday", function() {
         let id = Math.random().toString(36).substring(7);
@@ -99,7 +98,7 @@ jQuery(document).ready(function() {
           .find(".daterange_timeslots")
           .first()
           .clone()
-          .prop('id',id)
+          .prop('id',id).prop('name','dd_friday_timeslots[]')
           .show()
           .appendTo(".daterange_results_friday");
         jQuery('#'+id)
@@ -113,7 +112,7 @@ jQuery(document).ready(function() {
           .on("show.daterangepicker", function(ev, picker) {
             picker.container.find(".calendar-table").hide();
           });
-        jQuery("#dd_friday_timeslots_1").hide()     
+        jQuery("#dd_friday_timeslots_0").hide()     
       });
       jQuery(".daterange_wrapper").on("click", "#daterange_clone_saturday", function() {
         let id = Math.random().toString(36).substring(7);
@@ -122,7 +121,7 @@ jQuery(document).ready(function() {
           .find(".daterange_timeslots")
           .first()
           .clone()
-          .prop('id',id)
+          .prop('id',id).prop('name','dd_saturday_timeslots[]')
           .show()
           .appendTo(".daterange_results_saturday");
         jQuery('#'+id)
@@ -136,7 +135,7 @@ jQuery(document).ready(function() {
           .on("show.daterangepicker", function(ev, picker) {
             picker.container.find(".calendar-table").hide();
           });
-        jQuery("#dd_saturday_timeslots_1").hide()       
+        jQuery("#dd_saturday_timeslots_0").hide()       
       });  
       jQuery(".daterange_wrapper").on("click", "#daterange_clone_sunday", function() {
         let id = Math.random().toString(36).substring(7);
@@ -145,7 +144,7 @@ jQuery(document).ready(function() {
           .find(".daterange_timeslots")
           .first()
           .clone()
-          .prop('id',id)
+          .prop('id',id).prop('name','dd_sunday_timeslots[]')
           .show()
           .appendTo(".daterange_results_sunday");
         jQuery('#'+id)
@@ -159,7 +158,7 @@ jQuery(document).ready(function() {
           .on("show.daterangepicker", function(ev, picker) {
             picker.container.find(".calendar-table").hide();
           });
-        jQuery("#dd_sunday_timeslots_1").hide()   
+        jQuery("#dd_sunday_timeslots_0").hide()   
       });   
       
       jQuery(".daterange_wrapper").on("click", "#daterange_remove_monday", function() {
