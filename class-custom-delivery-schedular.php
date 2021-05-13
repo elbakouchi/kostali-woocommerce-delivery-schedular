@@ -1,5 +1,6 @@
 <?php
 require_once plugin_dir_path(__FILE__) . '../woocommerce-delivery-schedular/includes/class-delivery-date.php';
+//require_once plugin_dir_path(__FILE__) . '/class-custom-delivery-date-public.php';
 class Custom_Delivery_Date extends Delivery_Date
 {
 
@@ -31,13 +32,21 @@ class Custom_Delivery_Date extends Delivery_Date
 
         $this->dld_load_dependencies();
         $this->dld_define_admin_hooks();
+        $this->dld_define_public_hooks();
     }
 
     private function dld_define_admin_hooks() {
 
 		$plugin_admin = new Custom_Delivery_Date_Admin( $this->dld_get_plugin_name(), $this->dld_get_version(), $this->dld_get_loader() );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'dld_enqueue_styles',10,1 );
+        $this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'dld_enqueue_styles',10,1 );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'dld_enqueue_scripts',10,1 );
+    }
+    
+    private function dld_define_public_hooks() {
+
+		$plugin_public = new Custom_Delivery_Date_Public( $this->dld_get_plugin_name(), $this->dld_get_version(), $this->dld_get_loader() );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'dld_enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'dld_enqueue_scripts' );
 	}
 
     private function dld_load_dependencies() {
@@ -47,8 +56,10 @@ class Custom_Delivery_Date extends Delivery_Date
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . '/woocommerce-delivery-schedular/includes/class-delivery-date-ajax.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . '/woocommerce-delivery-schedular/includes/class-delivery-date-shortcodes.php';
 
-		require_once  dirname( __FILE__ )  . '/class-custom-delivery-date-admin.php';
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . '/woocommerce-delivery-schedular/public/class-delivery-date-public.php';
+        require_once  dirname( __FILE__ )  . '/class-custom-delivery-date-admin.php';
+        require_once  dirname( __FILE__ )  . '/class-custom-delivery-date-public.php';
+        
+		//require_once plugin_dir_path( dirname( __FILE__ ) ) . '/woocommerce-delivery-schedular/public/class-delivery-date-public.php';
 
 		$this->loader = new Delivery_Date_Hooks();
 	}

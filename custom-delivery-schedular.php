@@ -102,7 +102,28 @@ if (!class_exists('Custom_Delivery_Date')) {
         echo json_encode($response);
         wp_die();
     }
+    function dld_delivery_date_enqueue_script()
+    {
+     
+  
+      wp_enqueue_script('delivery-date-enqueue-ui-scriptdf', 'https://code.jquery.com/ui/1.9.2/jquery-ui.js', array(
+        'jquery'
+      ));
+  
+      wp_enqueue_style('delivery-date-enqueue-ui-scriptnm,df', 'https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css');
+  
+      wp_enqueue_style('delivery-date-enqueue-ui-scriptnmbndf', 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css');
+     
+      
+    }
 
+     function dld_enqueue_scripts() {
+
+		wp_enqueue_script( $this->plugin_name.'_for_public', plugins_url( '/js/delivery-date-public.js', __FILE__ ), array( 'jquery' ), $this->version, false );
+
+		wp_localize_script( $this->plugin_name.'_for_public', 'my_ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+	}
+   
     function get_date()
     {
 
@@ -493,6 +514,7 @@ if (!class_exists('Custom_Delivery_Date')) {
                         <?php
                                 if ($Override_Delivery_dates == 'Override_Delivery_dates') {
                                     if ($Delivery_dates_days_check == 'Delivery_Days') {
+                                        if(!isset($value)) $value = "";
                         ?>
                         <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
                         <?php } else if ($Delivery_dates_days_check == 'Delivery_dates') {

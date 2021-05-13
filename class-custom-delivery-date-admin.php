@@ -86,7 +86,7 @@ class Custom_Delivery_Date_Admin
       wp_enqueue_style($this->plugin_name . '_for_custom_admin', plugin_dir_url(__FILE__) . '/custom-delivery-date-admin.css', array(), $this->version, 'all');
     }
     global $post, $wpdb;
-    if ($hook == 'post-new.php' || $hook == 'post.php' || $_GET['page'] == 'woocommerce-delivery-schedular') {
+    if ($hook == 'post-new.php' || $hook == 'post.php' || (array_key_exists('page', $_GET) && $_GET['page'] == 'woocommerce-delivery-schedular')) {
       if ($post && 'product' === $post->post_type || $_GET['page'] == 'woocommerce-delivery-schedular') {
         wp_enqueue_style($this->plugin_name . '_for_admin', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/css/delivery-date-admin.css', array(), $this->version, 'all');
         wp_enqueue_style($this->plugin_name . '_for_custom_admin', plugin_dir_url(__FILE__) . '/custom-delivery-date-admin.css', array(), $this->version, 'all');
@@ -109,8 +109,8 @@ class Custom_Delivery_Date_Admin
       wp_enqueue_script('WOO-QB-bootstrap-javascript', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js');
     }
     global $post;
-    if ($hook == 'post-new.php' || $hook == 'post.php' || $_GET['page'] == 'woocommerce-delivery-schedular') {
-      if ($post && 'product' === $post->post_type || $_GET['page'] == 'woocommerce-delivery-schedular') {
+    if ($hook == 'post-new.php' || $hook == 'post.php' || (array_key_exists('page', $_GET) && $_GET['page'] == 'woocommerce-delivery-schedular')) {
+      if ($post && 'product' === $post->post_type || (array_key_exists('page', $_GET) && $_GET['page'] == 'woocommerce-delivery-schedular')) {
         wp_enqueue_script($this->plugin_name . '-admin', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/js/delivery-date-admin.js', array('jquery'), $this->version, false);
         wp_enqueue_script($this->plugin_name . '-custom-admin', plugin_dir_url(__FILE__) . '/custom-delivery-date-admin.js', array('jquery'), $this->version, false);
         wp_enqueue_script($this->plugin_name . '-multiDatepicker', plugin_dir_url(__FILE__) . '../woocommerce-delivery-schedular/admin/js/jquery-ui.multidatespicker.js', array('jquery'), $this->version, false);
