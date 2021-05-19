@@ -33,6 +33,9 @@ class Custom_Delivery_Date extends Delivery_Date
         $this->dld_load_dependencies();
         $this->dld_define_admin_hooks();
         $this->dld_define_public_hooks();
+        $this->dld_ajax_handler();
+        $this->dld_add_shortcodes();
+
     }
 
     private function dld_define_admin_hooks() {
@@ -47,6 +50,12 @@ class Custom_Delivery_Date extends Delivery_Date
 		$plugin_public = new Custom_Delivery_Date_Public( $this->dld_get_plugin_name(), $this->dld_get_version(), $this->dld_get_loader() );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'dld_enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'dld_enqueue_scripts' );
+    }
+  
+	private function dld_add_shortcodes() {
+
+		$shortcodes = new Custom_Delivery_Date_Shortcodes();
+		$shortcodes->init();
 	}
 
     private function dld_load_dependencies() {
@@ -58,9 +67,30 @@ class Custom_Delivery_Date extends Delivery_Date
 
         require_once  dirname( __FILE__ )  . '/class-custom-delivery-date-admin.php';
         require_once  dirname( __FILE__ )  . '/class-custom-delivery-date-public.php';
+        require_once  dirname( __FILE__ )  . '/class-custom-delivery-date-shortcodes.php';
         
 		//require_once plugin_dir_path( dirname( __FILE__ ) ) . '/woocommerce-delivery-schedular/public/class-delivery-date-public.php';
 
-		$this->loader = new Delivery_Date_Hooks();
+        $this->loader = new Delivery_Date_Hooks();
+    }
+    
+    private function dld_ajax_handler() {
+
+		$render = new Delivery_Date_AJAX();
+		$ajax_actions = array(
+			'dld_as_read' 							=> true, 
+			'dld_product_id_act'				=> true, 
+			'dld_mark_message_as_read'	=> true,
+			'fun1' =>true
+		);
+
+		foreach ($ajax_actions as $ajax_action => $nopriv) {
+			
+		if ( $nopriv ) {
+
+				$this->loader->add_action( 'wp_ajax_nopriv_' . $ajax_action, $render, $ajax_action );
+			}
+		$this->loader->add_action( 'wp_ajax_' . $ajax_action, $render, $ajax_action );
+		}
 	}
 }

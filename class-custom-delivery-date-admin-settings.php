@@ -373,7 +373,7 @@ class Custom_Delivery_Date_Admin_Settings
 
             case 'dd_dash_select_postal_code':
 ?>
-                <input type="checkbox" name="dd_settings[allow_postal_code]" value="checked" <?php echo $options['allow_postal_code']; ?>>
+                <input type="checkbox" name="dd_settings[allow_postal_code]" value="checked" <?php echo (array_key_exists('allow_postal_code', $options))? $options['allow_postal_code']: ""; ?>>
                 <span class="dd_tooltip" data-toggle="tooltip" data-placement="right" title="Enable Postal Code.">&#63;</span>
             <?php
                 echo "<td><b>Select postal code</b>";
@@ -586,7 +586,7 @@ class Custom_Delivery_Date_Admin_Settings
                         ?><input type="text" name="dd_holidays[holiday][]" class="holiday" value="<?php echo $value; ?>" autocomplete="off" /><?php
                                                                                                                                     }
                                                                                                                                 } else {
-                                                                                                                                        ?><input type="text" name="dd_holidays[holiday][]" class="holiday" value="<?php echo $value; ?>" autocomplete="off" /><?php
+                                                                                                                                        ?><input type="text" name="dd_holidays[holiday][]" class="holiday" value="<?php echo (isset($value))?$value:''; ?>" autocomplete="off" /><?php
                                                                                                                                     }
 
 
@@ -631,7 +631,7 @@ class Custom_Delivery_Date_Admin_Settings
 
             case 'dd_display_shop_page':
             ?>
-                <input type="checkbox" name="dd_settings[allow_shop_page]" value="checked" <?php echo $options['allow_shop_page']; ?>>
+                <input type="checkbox" name="dd_settings[allow_shop_page]" value="checked" <?php echo (array_key_exists('allow_shop_page',$options))?$options['allow_shop_page']:""; ?>>
                 <span class="dd_tooltip" data-toggle="tooltip" data-placement="right" title="Enable Delivery Calender on Shop page.">&#63;</span>
             <?php
                 break;

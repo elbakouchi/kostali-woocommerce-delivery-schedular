@@ -43,10 +43,11 @@ class Custom_Delivery_Date_Public extends Delivery_Date_Public {
 	 * @since    1.0.0
 	 */
 	public function dld_enqueue_scripts() {
+		wp_enqueue_script('jquery-ui-datepicker');
 
-		wp_enqueue_script( $this->plugin_name.'_for_public', plugins_url( '../woocommerce-delivery-schedular/public/js/delivery-date-public.js', __FILE__ ), array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name.'_for_custom_public', plugins_url( 'custom-delivery-date-public.js', __FILE__ ), array( 'jquery' ), $this->version, false );
 
-		wp_localize_script( $this->plugin_name.'_for_public', 'my_ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
+		wp_localize_script( $this->plugin_name.'_for_custom_public', 'my_ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ) ) );
 	}
 
 	public function dld_define_public_hooks() {

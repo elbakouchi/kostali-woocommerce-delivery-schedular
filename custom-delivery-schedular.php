@@ -126,10 +126,9 @@ if (!class_exists('Custom_Delivery_Date')) {
    
     function get_date()
     {
-
         print_r($_POST);
         session_start();
-        $_SESSION['sel_date'] = $_POST['sel_date'];
+        $_SESSION['sel_date'] = (array_key_exists('sel_date', $_POST))?$_POST['sel_date']:null;
         update_option('sel_date', $_SESSION['sel_date']);
         print_r($_SESSION);
         die();
@@ -139,22 +138,36 @@ if (!class_exists('Custom_Delivery_Date')) {
     {
         $id = $_POST['product_id'];
         $user_date = $_POST['date'];
+        $day_of_week = $_POST['day_of_week'];
         $response = array();
 
         $Override_Delivery_dates = get_post_meta($id, '_del_date_Override_Delivery_dates', true);
         $prefix = '_del_date_';
         $Delivery_dates_days_check = get_post_meta($id, $prefix . 'my_key', true) ? get_post_meta($id, $prefix . 'my_key', true) : '';
-
+        $day_of_week_meta = 'dd_'.$day_of_week.'_timeslots';
+        
 
         $datetimes_slot = get_post_meta($id, $prefix . 'datetimes', true);
         $daystimes_slot = get_post_meta($id, $prefix . 'datetimes_days', true);
         $datestimes_slot = get_post_meta($id, $prefix . 'datetimes_dates', true);
         $datesrange_times_slot = get_post_meta($id, $prefix . 'datetimes_daterange', true);
-
+        $day_of_week_timeslots = get_post_meta($id, $prefix. $day_of_week_meta, false );
+        
         $options = get_option('dd_settings');
         $days_options = get_option('dd_days');
         $dates_options = get_option('dd_dates');
         $datesrange_options = get_option('dd_dates_ranges');
+        $general_day_of_week_timeslots = get_option($day_of_week_meta);
+        
+        foreach ($general_day_of_week_timeslots as $value) {
+            $response[$value] = $value;
+        }
+        
+        foreach ($day_of_week_timeslots as $value) {
+            $response[$value] = $value;
+        }
+       // echo json_encode($response);
+       // wp_die();
 
         if ($Override_Delivery_dates == 'Override_Delivery_dates') {
             if ($Delivery_dates_days_check == 'Delivery_Days') {
