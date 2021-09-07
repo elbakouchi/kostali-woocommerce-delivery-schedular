@@ -965,6 +965,7 @@ class Custom_Delivery_Date_Admin_Settings
         $Delivery_dates_days = get_post_meta($post->ID, $prefix . 'my_key', true) ? get_post_meta($post->ID, $prefix . 'my_key', true) : '';
 
         $Override_Delivery_dates = get_post_meta($post->ID, $prefix . 'Override_Delivery_dates', true) ? get_post_meta($post->ID, $prefix . 'Override_Delivery_dates', true) : '';
+        $Override_WOD_dates = get_post_meta($post->ID, $prefix . 'Override_WOD_dates'. $post->ID, true) ? get_post_meta($post->ID, $prefix . 'Override_WOD_dates'. $post->ID, true) : '0';
 
         // get time slot value start
         $mul_datetimes = get_post_meta($post->ID, $prefix . 'mul_datetimes', true) ? get_post_meta($post->ID, $prefix . 'mul_datetimes', true) : '';
@@ -1023,6 +1024,8 @@ class Custom_Delivery_Date_Admin_Settings
                 <div class="content">
                     <h4>Override Global Settings</h4>
                     <input type="checkbox" name="Override_Delivery_dates" value="Override_Delivery_dates" <?php checked($Override_Delivery_dates, 'Override_Delivery_dates'); ?> /> <?php echo esc_html__('Override Global Settings', 'Delivery-Date'); ?>
+                    <br>
+                    <input type="checkbox" name="Override_WOD_dates" value="1" <?php checked($Override_WOD_dates, '1'); ?> /> <?php echo esc_html__('Override woocommerce order delivery settings fro this product', 'WOD-Delivery-Date'); ?>
 
                 </div>
                 <div class="content">
@@ -1282,6 +1285,7 @@ class Custom_Delivery_Date_Admin_Settings
         // holiday slot end
         update_post_meta($post->ID, $prefix . 'my_key', wp_kses_post(sanitize_text_field($_POST['Delivery_dates_days'])));
         update_post_meta($post->ID, $prefix . 'Override_Delivery_dates', wp_kses_post(sanitize_text_field($_POST['Override_Delivery_dates'])));
+        update_post_meta($post->ID, $prefix . 'Override_WOD_dates'.$post->ID, wp_kses_post(sanitize_text_field($_POST['Override_WOD_dates'])));
 
         // update time slot start
 
