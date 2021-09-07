@@ -35,6 +35,7 @@ if (!class_exists('Custom_Delivery_Date')) {
     define('CUSTOM_DELIVERY_DATE_VERSION', '0.1.0');
 
     require_once plugin_dir_path(__FILE__) . '/class-custom-delivery-schedular.php';
+    require_once plugin_dir_path(__FILE__) . '/class-wc-od-checkout.php';
 
     /**
      * Begins execution of the plugin.
@@ -328,7 +329,7 @@ if (!class_exists('Custom_Delivery_Date')) {
         if (empty($cart_item['custom_date'])) {
 
             $options = get_option('dd_settings');
-            $id = $_POST['id'];
+            isset($_POST['id'])? $id = $_POST['id']:null;
             if (empty($id)) {
                 $id = get_option('custom_product_id');
             }
@@ -532,17 +533,17 @@ if (!class_exists('Custom_Delivery_Date')) {
                         <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
                         <?php } else if ($Delivery_dates_days_check == 'Delivery_dates') {
 
-                                ?><option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                                ?><option value="<?php if(isset($value)) echo $value; ?>"><?php if(isset($value)) echo esc_html__($value, 'Delivery-Date'); ?></option>
                         <?php  } else if ($Delivery_dates_days_check == 'Delivery_Deliveryday') { ?>
-                        <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                        <option value="<?php if(isset($value)) echo $value; ?>"><?php if(isset($value)) echo esc_html__($value, 'Delivery-Date'); ?></option>
                         <?php }
                         } else {
                         if ($options['select_days_or_date'] == "override_days") {?>
-                        <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                        <option value="<?php if(isset($value)) echo $value; ?>"><?php if(isset($value)) echo esc_html__($value, 'Delivery-Date'); ?></option>
                             <?php } elseif ($options['select_days_or_date'] == "override_dates") { ?>
-                        <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                        <option value="<?php  if(isset($value)) echo $value; ?>"><?php if(isset($value)) echo esc_html__($value, 'Delivery-Date'); ?></option>
                         <?php } elseif ($options['select_days_or_date'] == "override_dates_range") { ?>
-                        <option value="<?php echo $value; ?>"><?php echo esc_html__($value, 'Delivery-Date'); ?></option>
+                        <option value="<?php if(isset($value)) echo $value; ?>"><?php if(isset($value)) echo esc_html__($value, 'Delivery-Date'); ?></option>
                         <?php  } ?>
                         <?php } ?></select></td>
                 </tr>
